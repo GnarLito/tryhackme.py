@@ -1,0 +1,19 @@
+
+
+class Team:
+    def __init__(self, state, data):
+        self._state = state
+        
+        if data.get("found", False):
+            self._from_data(data)
+    
+    def _from_data(self, data):
+        self.name = data.get("name")
+        self._members = data.get("members")
+        self.capitain = self._state.get_user(data.get("capitain"))
+        self.password = data.get("password")
+        self.university = data.get("university")
+    
+    @property
+    def members(self):
+        return [self._state.get_user(user) for user in self._members]
