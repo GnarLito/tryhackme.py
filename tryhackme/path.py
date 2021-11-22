@@ -1,5 +1,5 @@
 from .task import PathTask
-
+from . import utils
 
 class Path:
     def __init__(self, state, data):
@@ -14,9 +14,9 @@ class Path:
     
     def _from_data(self, data):
         self.code = data.get("code")
-        self.description = data.get("description")
+        self.raw_description = data.get("description")
         self.color = data.get("color")
-        self.intro = data.get("intro")
+        self.raw_intro = data.get("intro")
         self.type = data.get("contentType")
         self.public = data.get("public", False)
         self.room_count = data.get("roomNo")
@@ -33,6 +33,12 @@ class Path:
     def _sync(self, data):
         self.user = self._state.store_user(data.get('username'))
 
+    @property
+    def description(self):
+        return utils.HTML_parse(self.raw_description)
+    @property
+    def intro(self):
+        return utils.HTML_parse(self.raw_intro)
     @property
     def tasks(self):
         return [PathTask(state=self._state, data=task) for task in self._tasks]
