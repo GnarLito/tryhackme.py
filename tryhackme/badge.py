@@ -1,0 +1,17 @@
+
+
+class Badge:
+    def __init__(self, state, data):
+        self._state = state
+        
+        self._from_data(data)
+    
+    def _from_data(self, data):
+        self.title = data.get("title")
+        self.name = data.get("name")
+        self.description = data.get("description")
+        self._to_earn = data.get("toEarn", [])
+    
+    @property
+    def to_earn(self):
+        return [self._state.get_room(room_code) for room_code in self._to_earn]

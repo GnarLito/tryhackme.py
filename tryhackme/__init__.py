@@ -6,6 +6,7 @@ from .converters import *
 from .utils import *
 from .client import Client
 from .user import User
+from .badge import Badge
 
 from .room import Room
 from .task import PathTask, RoomTask

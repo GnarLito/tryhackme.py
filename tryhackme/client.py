@@ -38,6 +38,12 @@ class Client:
         except Exception as e:
             raise e # * pre definition for when exception overruling is needed
     
+    def get_badge(self, badge_name):
+        return self._state.get_badge(badge_name)
+    
+    def get_badges(self):
+        return self._state.badges
+    
     def get_practice_rooms(self):
         practice_rooms = self.http.get_practise_rooms()
         return_rooms = []

@@ -4,6 +4,7 @@ from .room import Room
 from .path import Path
 from .module import Module
 from .user import User, ClientUser
+from .badge import Badge
 from .serie import Serie
 from .network import Network
 from .vpn import VPN
@@ -28,6 +29,9 @@ class State:
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
         self.vpn = [] # ? hmm
+    
+    def _sync(self):
+        for badge in self.http.get_all_badges(): self.store_badge(badge)
     
     def get_client_user(self):
         return self.user
@@ -89,21 +93,20 @@ class State:
             return self._users[username]
         except KeyError:
             return self.store_user(username)
-    # TODO: badge class redirect
+    
     def store_badge(self, data):
-        badge_code = data.get("name")
+        badge_name = data.get("name")
         try:
-            return self._badges[badge_code]
+            return self._badges[badge_name]
         except KeyError:
-            # badge = Badge(state=self, data=data)
-            badge = data
-            self._badges[badge_code] = badge
+            badge = Badge(state=self, data=data)
+            self._badges[badge_name] = badge
             return badge
-    def get_badge(self, badge_code):
+    def get_badge(self, badge_name):
         try:
-            return self._badges[badge_code]
+            return self._badges[badge_name]
         except KeyError:
-            return self.store_badge(badge_code)
+            return self.store_badge(badge_name)
     
     def store_serie(self, data):
         serie_code = data.get("id")
