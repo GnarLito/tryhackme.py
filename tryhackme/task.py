@@ -1,6 +1,7 @@
 from .question import Question
+from . import utils
 
-# TODO: html elements removing
+
 class RoomTask:
     def __init__(self, state, data):
         self._state = state
@@ -9,8 +10,8 @@ class RoomTask:
         self._from_data(data)
     
     def _from_data(self, data):
-        self.title = data.get('taskTitle')
-        self.description = data.get('taskDesc')
+        self.raw_title = data.get('taskTitle')
+        self.raw_description = data.get('taskDesc')
         self.type = data.get('taskType')
         self.number = data.get('taskNo')
         self.created = data.get('taskCreated')
@@ -18,6 +19,10 @@ class RoomTask:
         self.uploadId = data.get('uploadId')
         self._questions = data.get('tasksInfo', []) if self._state.authenticated else data.get('questions', [])
 
+    @property
+    def title(self):
+        return utils.HTML_parse(self.raw_title, "*")
+    
     @property
     def question_count(self):
         return self._questions.__len__()
