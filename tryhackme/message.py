@@ -7,9 +7,9 @@ class Message:
         self._from_data(data)
     
     def _from_data(self, data):
-        self.message = data.get("msg")
+        self.message = data.get("message")
         self.inserted = data.get("inserted")
-        self.user = utils.find_userId(data.get("userId"), self.group.users)
+        self.user = self.group.get_user_from_userId(data.get("userId"))
         
 
 # * can only be used on `get_all_message_groups` api call
@@ -32,3 +32,10 @@ class MessageGroup:
     @property
     def users(self):
         return [self._stats.store_user(user) for user in self._users]
+    
+    def get_user_from_userId(self, userId):
+        try:
+            username = [user.get("username") for user in self._users if user.get("userId") == userId]
+            return self._state.get_user(username[0])
+        except:
+            return None

@@ -7,20 +7,20 @@ class User:
     def __init__(self, state, username):
         self._state = state
         
-        self.username = username
+        self.name = username
         self._completed_rooms = []
         
-        if username is None or not self._state.http.get_user_exist(username=self.username).get('success', False):
-            raise NotImplemented("Unknown user with username: "+ str(self.username))
+        if username is None or not self._state.http.get_user_exist(username=self.name).get('success', False):
+            raise NotImplemented("Unknown user with username: "+ str(self.name))
         
         data = self._fetch()
         self._from_data(data)
     # TODO: fetch is a mess, needs fixing
     def _fetch(self):
         data = {}
-        data['badges'] = self._state.http.get_user_badges(username=self.username)
-        data['rank'] = self._state.http.get_discord_user(username=self.username)
-        data['completed_rooms'] = self._state.http.get_user_completed_rooms(username=self.username)
+        data['badges'] = self._state.http.get_user_badges(username=self.name)
+        data['rank'] = self._state.http.get_discord_user(username=self.name)
+        data['completed_rooms'] = self._state.http.get_user_completed_rooms(username=self.name)
         return data
     
     def _from_data(self, data):
@@ -35,7 +35,7 @@ class User:
         return [self._state.store_room(data=data) for data in self._completed_rooms]
     @property
     def badges(self):
-        return [self._state.get_badge(badge_code) for badge_code in self._badges]
+        return [self._state.get_badge(badge_code.get("name")) for badge_code in self._badges]
 
 
 class ClientUser(User):
@@ -58,7 +58,4 @@ class ClientUser(User):
     
     def _sync(self):
         self.message_groups = [MessageGroup(state=self._state, data=group) for group in self._state.http.get_all_group_messages()]
-    
-    def get_messages(self):
-        return [message for message in [group.messages for group in self.message_groups]]
     

@@ -6,8 +6,6 @@ from .converters import *
 from .utils import *
 from .client import Client
 from .user import User
-from .message import MessageGroup
-
 
 from .room import Room
 from .task import PathTask, RoomTask

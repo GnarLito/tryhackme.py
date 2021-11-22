@@ -100,13 +100,15 @@ class State:
         except KeyError:
             return self.store_user(username)
     
+    # TODO: badge class redirect temp workaround issue/#6 
     @property
     def badges(self):
+        badge_list = []
         if self._badges.__len__() < 1:
-            for badge in self.http.get_all_badges(): self.store_badge(badge)
+            for badge in self.http.get_all_badges(): badge_list.append(self.store_badge(badge))
         
-        return list(self._badges.values())
-    # TODO: badge class redirect
+        return badge_list
+        # return list(self._badges.values())
     def store_badge(self, data):
         badge_code = data.get("name")
         try:
@@ -114,13 +116,14 @@ class State:
         except KeyError:
             # badge = Badge(state=self, data=data)
             badge = data
-            self._badges[badge_code] = badge
+            # self._badges[badge_code] = badge
             return badge
-    def get_badge(self, badge_code):
+    def get_badge(self, badge_name):
         try:
-            return self._badges[badge_code]
+            return self._badges[badge_name]
         except KeyError:
-            return self.store_badge(badge_code)
+            badge_data = [badge for badge in self.http.get_all_badges() if badge.get("name") == badge_name]
+            return self.store_badge(badge_data)
     
     @property
     def series(self):
