@@ -35,7 +35,7 @@ class annotater(Base_decorator):
             if arg in annotions:
                 try:
                     result = self.function.__annotations__[arg]
-                    out_kwargs[arg] = result().convert(kwargs[arg])
+                    out_kwargs[arg] = result().convert(self.cls, kwargs[arg])
                 except Exception as e:
                     raise e
             else: out_kwargs[arg] = kwargs[arg]

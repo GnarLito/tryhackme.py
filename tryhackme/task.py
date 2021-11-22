@@ -11,7 +11,9 @@ class RoomTask:
     
     def _from_data(self, data):
         self.raw_title = data.get('taskTitle')
+        self.title = utils.HTML_parse(self.raw_title, "*")
         self.raw_description = data.get('taskDesc')
+        self.description = utils.HTML_parse(self.raw_description)
         self.type = data.get('taskType')
         self.number = data.get('taskNo')
         self.created = data.get('taskCreated')
@@ -19,10 +21,6 @@ class RoomTask:
         self.uploadId = data.get('uploadId')
         self._questions = data.get('tasksInfo', []) if self._state.authenticated else data.get('questions', [])
 
-    @property
-    def title(self):
-        return utils.HTML_parse(self.raw_title, "*")
-    
     @property
     def question_count(self):
         return self._questions.__len__()

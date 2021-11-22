@@ -1,8 +1,9 @@
 from .http import HTTP
 from .state import State
+from .user import ClientUser
 
 
-# TODO: build out Hackivities (room search), HTML scrapper for username and CSRF token, error build out, de HTML question object
+# TODO: build out Hackivities (room search) error build out
 # TODO: add VM, add GAMES, add VPN, user: (Team, messages, notifications)
 # ? maybe a writeup class but maybe not
 
@@ -10,7 +11,10 @@ class Client:
     def __init__(self, session=None):
         self.http = HTTP(session)
         self._state = State(self.http)
-    
+
+        if self._state.authenticated:
+            self._state.user = ClientUser(state=self._state, username=self.http.username)
+        
     def login(self, session):
         self.http.static_login(session)
     
@@ -94,4 +98,4 @@ class Client:
         return self.http.get_glossary_terms()
     @property
     def user(self):
-        return self._state.get_client_user()
+        return self._state.user

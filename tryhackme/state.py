@@ -3,23 +3,19 @@ import weakref
 from .room import Room
 from .path import Path
 from .module import Module
-from .user import User, ClientUser
+from .user import User
 from .serie import Serie
 from .network import Network
 from .vpn import VPN
 from .http import HTTP
 
-# TODO: vpn 
+# TODO: vpn
 class State:
     def __init__(self, http : HTTP):
         self.http = http
-        
+        self.user = None
         self._CRRF_token = self.http._CSRF_token
-        if self.authenticated:
-            self.user = ClientUser(self.http.username)
-        else:
-            self.user = None
-        
+                
         self._rooms = weakref.WeakValueDictionary()
         self._paths = weakref.WeakValueDictionary()
         self._modules = weakref.WeakValueDictionary()
@@ -29,8 +25,10 @@ class State:
         self._networks = weakref.WeakValueDictionary()
         self.vpn = [] # ? hmm
     
-    def get_client_user(self):
-        return self.user
+    
+    @property
+    def rooms(self):
+        return list(self._rooms.values())
     
     def store_room(self, data):
         room_code = data.get("roomCode")
@@ -47,6 +45,10 @@ class State:
             room_data = self.http.get_room_details(room_code=room_code)
             return self.store_room(room_data)
     
+    @property
+    def paths(self):
+        return list(self._paths.values())
+    
     def store_path(self, data):
         path_code = data.get("code")
         try:
@@ -61,6 +63,10 @@ class State:
         except KeyError:
             path_data = self.http.get_path(path_code=path_code)
             return self.store_path(path_data)
+    
+    @property
+    def modules(self):
+        return list(self._modules.values())
     
     def store_module(self, data):
         module_code = data.get("moduleURL")
@@ -77,6 +83,10 @@ class State:
             module_data = self.http.get_module(module_code=module_code)
             return self.store_module(module_data)
     
+    @property
+    def users(self):
+        return list(self._users.values())
+    
     def store_user(self, username):
         try:
             return self._users[username]
@@ -89,6 +99,13 @@ class State:
             return self._users[username]
         except KeyError:
             return self.store_user(username)
+    
+    @property
+    def badges(self):
+        if self._badges.__len__() < 1:
+            for badge in self.http.get_all_badges(): self.store_badge(badge)
+        
+        return list(self._badges.values())
     # TODO: badge class redirect
     def store_badge(self, data):
         badge_code = data.get("name")
@@ -105,6 +122,10 @@ class State:
         except KeyError:
             return self.store_badge(badge_code)
     
+    @property
+    def series(self):
+        return list(self._series.values())
+    
     def store_serie(self, data):
         serie_code = data.get("id")
         try:
@@ -119,6 +140,10 @@ class State:
         except KeyError:
             serie_data = self.http.get_serie(serie_code=serie_code)
             return self.store_serie(serie_data)
+    
+    @property
+    def networks(self):
+        return list(self._networks.values())
     
     def store_network(self, data):
         network_code = data.get("code")

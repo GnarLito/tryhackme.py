@@ -1,3 +1,4 @@
+from .message import MessageGroup
 from .errors import NotImplemented
 from .team import Team
 
@@ -9,8 +10,8 @@ class User:
         self.username = username
         self._completed_rooms = []
         
-        if not self._state.http.get_user_exist(username=self.username).get('success', False):
-            raise NotImplemented("Unknown user with username: "+ self.username)
+        if username is None or not self._state.http.get_user_exist(username=self.username).get('success', False):
+            raise NotImplemented("Unknown user with username: "+ str(self.username))
         
         data = self._fetch()
         self._from_data(data)
@@ -41,6 +42,7 @@ class ClientUser(User):
     def __init__(self, state, username):
         super().__init__(state, username)
         
+        self.message_groups = []
         data = self._fetch()
         self._from_data(data)
     
@@ -51,3 +53,12 @@ class ClientUser(User):
     
     def _from_data(self, data):
         self.team = Team(state=self._state, data=data.get("team"))
+        
+        self._sync()
+    
+    def _sync(self):
+        self.message_groups = [MessageGroup(state=self._state, data=group) for group in self._state.http.get_all_group_messages()]
+    
+    def get_messages(self):
+        return [message for message in [group.messages for group in self.message_groups]]
+    
