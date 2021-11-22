@@ -18,6 +18,8 @@ client = tryhackme.Client(session="<tryHackMe cookie: `connect.sid`>") # Logging
 client.get_stats() # {'publicRooms': 203, 'totalUsers': 88017, 'cloneableRooms': 967}
 
 ```
+For more info over getting the `connect.sid` visit [#1][i1]
+
 ## API documentation
 For the API documentation please visit the [TryHackMe-API-Doc](https://github.com/GnarLito/TryHackMe-API-Doc)
 
@@ -27,3 +29,5 @@ You're welcome to create Issues/Pull Requests with features you'd want to see
 
 ## License
 [MIT LICENSE](https://github.com/szymex73/py-thmapi/blob/master/LICENSE)
+
+[i1]: https://github.com/GnarLito/tryhackme.py/issues/1
