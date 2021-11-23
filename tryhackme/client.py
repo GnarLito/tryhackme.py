@@ -98,6 +98,3 @@ class Client:
     @property
     def glossary(self):
         return self.http.get_glossary_terms()
-    @property
-    def user(self):
-        return self._state.get_client_user()

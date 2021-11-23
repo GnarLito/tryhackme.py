@@ -205,8 +205,9 @@ class RouteList:
     
     # * user -messages
     
-    def get_unseen_messages(   **parameters): return Route(path="/api/message/has-unseen",    **parameters)
-    def get_all_group_messages(**parameters): return Route(path="/api/message/group/get-all", **parameters)
+    def get_unseen_messages(    **parameters): return Route(path="/api/message/has-unseen",             **parameters)
+    def get_group_messages(     **parameters): return Route(path="/api/message/group/get/{group_id}",   **parameters)
+    def get_all_group_messages( **parameters): return Route(path="/api/message/group/get-all",          **parameters)
     
     # * user -room
     
@@ -353,6 +354,8 @@ class HTTP(request_cog, HTTPClient):
         return self.request(RouteList.get_unseen_messages())
     def get_all_group_messages(self):
         return self.request(RouteList.get_all_group_messages())
+    def get_group_messages(self, group_id):
+        return self.request(RouteList.get_group_messages(group_id))
     
     # * user -room
 
