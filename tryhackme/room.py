@@ -57,7 +57,6 @@ class Room:
         return self._state.http.get_room_scoreboard(room_code=self.name)
     @property
     def tasks(self):
-        # TODO: add sessionless http client for no session task gathering
         if self.freeToUse or self._state.subscribed:
             return [RoomTask(state=self._state, data=task) for task in self._state.http.get_room_tasks(room_code=self.name).get('data')]
         else:

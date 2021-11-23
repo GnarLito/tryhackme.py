@@ -1,3 +1,4 @@
+from .message import MessageGroup
 from .errors import NotImplemented
 from .team import Team
 
