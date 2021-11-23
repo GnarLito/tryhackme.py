@@ -4,6 +4,8 @@ from .room import Room
 from .path import Path
 from .module import Module
 from .user import User, ClientUser
+from .message import MessageGroup
+from .team import Team
 from .badge import Badge
 from .serie import Serie
 from .network import Network
@@ -21,13 +23,19 @@ class State:
         self._paths = weakref.WeakValueDictionary()
         self._modules = weakref.WeakValueDictionary()
         self._users = weakref.WeakValueDictionary()
+        self._message_groups = weakref.WeakValueDictionary()
         self._badges = weakref.WeakValueDictionary()
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
         self.vpn = [] # ? hmm
+        self._team = None
     
     def _sync(self):
         for badge in self.http.get_all_badges(): self.store_badge(badge)
+    
+    def _clear_client(self):
+        self._message_groups = weakref.WeakValueDictionary()
+        self._team = None
     
     def get_client_user(self):
         return self.user
@@ -106,15 +114,10 @@ class State:
         except KeyError:
             return self.store_user(username)
     
-    # TODO: badge class redirect temp workaround issue/#6 
     @property
     def badges(self):
-        badge_list = []
-        if self._badges.__len__() < 1:
-            for badge in self.http.get_all_badges(): badge_list.append(self.store_badge(badge))
-        
-        return badge_list
-        # return list(self._badges.values())
+        return list(self._badges.values())
+    
     def store_badge(self, data):
         badge_name = data.get("name")
         try:
@@ -127,7 +130,15 @@ class State:
         try:
             return self._badges[badge_name]
         except KeyError:
-            return self.store_badge(badge_name)
+            self._sync()
+            try:
+                return self._badges[badge_name]
+            except KeyError:
+                raise NotImplemented(f"Badge with name {badge_name} is not found")
+    
+    @property
+    def series(self):
+        return list(self._series.values())
     
     def store_serie(self, data):
         serie_code = data.get("id")
@@ -162,6 +173,36 @@ class State:
         except KeyError:
             network_data = self.http.get_network(network_code=network_code)
             return self.store_network(network_data)
+
+    @property
+    def message_groups(self):
+        return list(self._message_groups.values())
+    
+    def store_message_group(self, data):
+        group_id = data.get("groupId")
+        try:
+            return self._message_groups[group_id]
+        except KeyError:
+            message_group = MessageGroup(state=self, data=data)
+            self._message_groups[group_id] = message_group
+            return message_group
+    def get_message_group(self, group_id):
+        try:
+            return self._message_groups[group_id]
+        except KeyError:
+            raise NotImplemented(f"message group with id {group_id} cannot be found")
+
+    @property
+    def team(self):
+        return self.team
+
+    def store_team(self, data):
+        if self._team is not None:
+            return self._team
+        else:
+            team = Team(state=self, data=data)
+            self._team = team
+            return team
 
     @property
     def authenticated(self):

@@ -1,13 +1,12 @@
-from .message import MessageGroup
 from .errors import NotImplemented
-from .team import Team
+
 
 class BaseUser:
     def __init__(self, state, username):
         self._state = state
         
-        if not self._state.http.get_user_exist(username=self.username).get('success', False):
-            raise NotImplemented("Unknown user with username: "+ self.username)
+        if not self._state.http.get_user_exist(username=username).get('success', False):
+            raise NotImplemented("Unknown user with username: "+ str(username))
         
         self.name = username
         self._completed_rooms = []
@@ -35,7 +34,7 @@ class BaseUser:
         return [self._state.get_badge(badge.get("name")) for badge in self._badges]
     @property
     def completed_rooms(self):
-        return [self._state.store_room(room.get("name")) for room in self._completed_rooms]
+        return [self._state.get_room(room.get("code")) for room in self._completed_rooms]
 
 class User(BaseUser):
     pass
@@ -47,14 +46,18 @@ class ClientUser(BaseUser):
         self._update()
     
     def _update(self):
-        self._message_groups = self._state.http.get_all_message_groups()
+        self._state._clear_client()
+        self._message_groups = self._state.http.get_all_group_messages()
         self._team = self._state.http.get_team_info()
         for badge in self._state.badges:
             if [user_badge for user_badge in self.badges if badge.name == user_badge.name].__len__() > 1:
                 badge.earned = True
     
+    @property
+    def message_groups(self):
+        return [self._state.store_message_group(group) for group in self._message_groups]
     
     # * Team data is semi dynamic, it isnt likly to change much during runtime
     @property
     def team(self):
-        return Team(state=self._state, data=self._team)
+        return self._state.store_team(self._team)

@@ -10,7 +10,10 @@ class Room:
         self._creators = []
         
         if not data.get('success', False):
-            raise NotImplemented("failed to create room, no success value returned")
+            if data.get("code") == 5:
+                raise NotImplemented(f"Room: {data.get('roomCode')}, Unable to load room: {data.get('message')}")
+            else:
+                raise NotImplemented("failed to create room, no success value returned")
         
         self._from_data(data)
         
