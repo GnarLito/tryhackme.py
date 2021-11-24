@@ -17,8 +17,9 @@ class State:
     def __init__(self, http : HTTP):
         self.http = http
         self.user = None
-        self._CRRF_token = self.http._CSRF_token
-                
+        self._team = None
+        self._CRRF_token = self.http.retrieve_CSRF_token()
+        
         self._rooms = weakref.WeakValueDictionary()
         self._paths = weakref.WeakValueDictionary()
         self._modules = weakref.WeakValueDictionary()
@@ -28,7 +29,6 @@ class State:
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
         self.vpn = [] # ? hmm
-        self._team = None
     
     def _sync(self):
         for badge in self.http.get_all_badges(): self.store_badge(badge)
@@ -207,6 +207,7 @@ class State:
     @property
     def authenticated(self):
         return self.http.authenticated
+    
     @property
     def subscribed(self):
         if self.authenticated:

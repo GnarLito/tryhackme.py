@@ -15,7 +15,11 @@ class Client:
     def login(self, session):
         self.http.static_login(session)
         if self._state.authenticated:
-            self._state.user = ClientUser(state=self._state, username=self.http.username)
+            try:
+                self._state.user = ClientUser(state=self._state, username=self.http.username)
+            except Exception as e:
+                print("Failed to create CLient user: ", str(e))
+                self._state.authenticated = False
     
     def get_room(self, room_code):
         try:
@@ -103,3 +107,6 @@ class Client:
     @property
     def user(self):
         return self._state.user
+    @property
+    def authenticated(self):
+        return self._state.authenticated

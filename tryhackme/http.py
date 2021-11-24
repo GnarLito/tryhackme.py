@@ -39,22 +39,30 @@ class HTTPClient:
         try: 
             self.request(RouteList.get_unseen_notifications())
             self.authenticated = True
-            self.retrieve_CSRF_token()
-            self.retrieve_username()
+            self._CSRF_token = self.retrieve_CSRF_token()
+            self.username = self.retrieve_username()
         except Exception as e:
             print("session Issue:", e)
     
     def retrieve_CSRF_token(self):
         if not self.authenticated:
-            return
-        page = self.request(RouteList.get_profile_page())
-        self._CSRF_token = self._HTTPClient__CSRF_token_regex.search(page).group(1)
+            return None
+        try:
+            page = self.request(RouteList.get_profile_page())
+            return self._HTTPClient__CSRF_token_regex.search(page).group(1)
+        except AttributeError:
+            self.authenticated = False
+            return None
 
     def retrieve_username(self):
         if not self.authenticated:
-            return
-        page = self.request(RouteList.get_profile_page())
-        self.username = self._HTTPClient__Username_regex.search(page).group(1)
+            return None
+        try:
+            page = self.request(RouteList.get_profile_page())
+            return self._HTTPClient__Username_regex.search(page).group(1)
+        except AttributeError:
+            self.authenticated = False
+            return None
     
     def request(self, route, **kwargs):
         session = self.__session
@@ -110,13 +118,15 @@ class Route:
     BASE = "https://www.tryhackme.com"
     def __init__(self, method=GET, path='', **parameters):
         self.method = method
+        self._path = path
         self.path = path
         url = self.BASE + self.path
         
         options = parameters.pop("options", None)
         if parameters:
             try:
-                self.url = url.format(**{k: _uriquote(v) if isinstance(v, str) else v for k, v in parameters.items()})
+                self.path = self.path.format(**{k: _uriquote(v) if isinstance(v, str) else v for k, v in parameters.items()})
+                self.url = self.BASE + self.path
             except Exception as e:
                 raise errors.NotValidUrlParameters(e)
         else:
