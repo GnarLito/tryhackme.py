@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="tryhackme.py",
-    version="1.0.0",
+    version="1.2.1",
     author="gnarlito",
     author_email="gnarlito35@gmail.com",
     description="THM public API wrapper",

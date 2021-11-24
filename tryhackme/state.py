@@ -37,6 +37,16 @@ class State:
         self._message_groups = weakref.WeakValueDictionary()
         self._team = None
     
+    def _clear_all(self):
+        self._rooms = weakref.WeakValueDictionary()
+        self._paths = weakref.WeakValueDictionary()
+        self._modules = weakref.WeakValueDictionary()
+        self._users = weakref.WeakValueDictionary()
+        self._message_groups = weakref.WeakValueDictionary()
+        self._badges = weakref.WeakValueDictionary()
+        self._series = weakref.WeakValueDictionary()
+        self._networks = weakref.WeakValueDictionary()
+    
     def get_client_user(self):
         return self.user
     

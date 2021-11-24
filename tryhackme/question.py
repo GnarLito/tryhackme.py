@@ -19,5 +19,5 @@ class Question:
         self.correct = data.get("correct", False)
         self.attempts = data.get("attempts", 0)
         self.submission = data.get("submission", "")
-        self.has_answer = data.get("noAnswer", False)
+        self.has_answer = not data.get("noAnswer", False)
     
