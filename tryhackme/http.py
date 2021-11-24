@@ -5,7 +5,7 @@ from urllib.parse import quote as _uriquote
 import requests
 
 from . import __version__, errors, utils
-from .checks import _county_types, _leaderboard_types, _vpn_types
+from .checks import _county_types, _leaderboard_types, _vpn_types, _notNone_check
 from .cog import request_cog
 
 GET='get'
@@ -14,14 +14,14 @@ POST='post'
 
 class HTTPClient:
     __CSRF_token_regex = re.compile("const csrfToken[ ]{0,1}=[ ]{0,1}[\"|'](.{36})[\"|']")
-    __Username_regex = re.compile("const username[ ]{0,1}=[ ]{0,1}[\"|'](.{16})[\"|']")
+    __Username_regex = re.compile("const username[ ]{0,1}=[ ]{0,1}[\"|'](.{1,16})[\"|']")
     def __init__(self, session=None):
         self.authenticated = False
         self.__session = requests.Session()
         self.satic_session = requests.Session()
         self.connect_sid = None
         self._CSRF_token = None
-        self._username = None
+        self.username = None
         
         self.user_agent = f'Tryhackme: (https://github.com/GnarLito/thm-api-py {__version__}) Python/{sys.version_info[0]}.{sys.version_info[1]} requests/{requests.__version__}'
         
@@ -39,21 +39,30 @@ class HTTPClient:
         try: 
             self.request(RouteList.get_unseen_notifications())
             self.authenticated = True
-            self.retrieve_CSRF_token()
-            self.retrieve_username()
-        except: pass
+            self._CSRF_token = self.retrieve_CSRF_token()
+            self.username = self.retrieve_username()
+        except Exception as e:
+            print("session Issue:", e)
     
     def retrieve_CSRF_token(self):
         if not self.authenticated:
-            return
-        page = self.request(RouteList.get_profile_page())
-        self._CSRF_token = self.__CSRF_token_regex.search(page).group(1)
+            return None
+        try:
+            page = self.request(RouteList.get_profile_page())
+            return self._HTTPClient__CSRF_token_regex.search(page).group(1)
+        except AttributeError:
+            self.authenticated = False
+            return None
 
     def retrieve_username(self):
         if not self.authenticated:
-            return
-        page = self.request(RouteList.get_profile_page())
-        self.username = self.__Username_regex.search(page).group(1)
+            return None
+        try:
+            page = self.request(RouteList.get_profile_page())
+            return self._HTTPClient__Username_regex.search(page).group(1)
+        except AttributeError:
+            self.authenticated = False
+            return None
     
     def request(self, route, **kwargs):
         session = self.__session
@@ -101,7 +110,7 @@ class HTTPClient:
                     raise errors.ServerError(request=r, route=route, data=data)
         
         except Exception as e:           
-            print(e)
+            raise e
 
 
 class Route:
@@ -109,13 +118,15 @@ class Route:
     BASE = "https://www.tryhackme.com"
     def __init__(self, method=GET, path='', **parameters):
         self.method = method
+        self._path = path
         self.path = path
         url = self.BASE + self.path
         
         options = parameters.pop("options", None)
         if parameters:
             try:
-                self.url = url.format(**{k: _uriquote(v) if isinstance(v, str) else v for k, v in parameters.items()})
+                self.path = self.path.format(**{k: _uriquote(v) if isinstance(v, str) else v for k, v in parameters.items()})
+                self.url = self.BASE + self.path
             except Exception as e:
                 raise errors.NotValidUrlParameters(e)
         else:
@@ -200,13 +211,14 @@ class RouteList:
     
     # * user -notifications
     
-    def get_unseen_notifications(**parameters): return Route(path="/api/notifications/has-unseen", **parameters)
-    def get_all_notifications(   **parameters): return Route(path="/api/notifications/get",        **parameters)
+    def get_unseen_notifications(**parameters): return Route(path="/notifications/has-unseen", **parameters)
+    def get_all_notifications(   **parameters): return Route(path="/notifications/get",        **parameters)
     
     # * user -messages
     
-    def get_unseen_messages(   **parameters): return Route(path="/api/message/has-unseen",    **parameters)
-    def get_all_group_messages(**parameters): return Route(path="/api/message/group/get-all", **parameters)
+    def get_unseen_messages(   **parameters): return Route(path="/message/has-unseen",              **parameters)
+    def get_all_group_messages(**parameters): return Route(path="/message/group/get-all",           **parameters)
+    def get_group_messages(    **parameters): return Route(path="/message/group/get/{group_id}",    **parameters)
     
     # * user -room
     
@@ -353,6 +365,8 @@ class HTTP(request_cog, HTTPClient):
         return self.request(RouteList.get_unseen_messages())
     def get_all_group_messages(self):
         return self.request(RouteList.get_all_group_messages())
+    def get_group_messages(self, group_id):
+        return self.request(RouteList.get_group_messages(group_id))
     
     # * user -room
 
@@ -365,17 +379,17 @@ class HTTP(request_cog, HTTPClient):
 
     # * user
 
-    def get_user_rank(self, username):
+    def get_user_rank(self, username : _notNone_check):
         return self.request(RouteList.get_user_rank(username=username))
-    def get_user_activty(self, username):
+    def get_user_activty(self, username : _notNone_check):
         return self.request(RouteList.get_user_activty(username=username))
     def get_all_friends(self):
         return self.request(RouteList.get_all_friends())
-    def get_discord_user(self, username):
+    def get_discord_user(self, username : _notNone_check):
         return self.request(RouteList.get_discord_user(username=username))
-    def get_user_exist(self, username):
+    def get_user_exist(self, username : _notNone_check):
         return self.request(RouteList.get_user_exist(username=username))
-    def search_user(self, username):
+    def search_user(self, username : _notNone_check):
         return self.request(RouteList.search_user(username=username))
 
     # * room

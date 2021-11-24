@@ -15,7 +15,7 @@ class WebError(Exception):
         self.data = data
     
     def __str__(self):
-        return f"{type(self).__name__}(code={self.request.status_code}, return_URL={self.route.url}, data_length: {self.data.__len__()})"
+        return f"{type(self).__name__}(code={self.request.status_code}, URL={self.route.path}, returned_url={self.request.url}, data_length: {self.data.__len__()})"
 
 class Unauthorized(WebError):
     pass

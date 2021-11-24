@@ -10,7 +10,7 @@ class Team:
     def _from_data(self, data):
         self.name = data.get("name")
         self._members = data.get("members")
-        self.capitain = self._state.get_user(data.get("capitain"))
+        self.captain = self._state.get_user(data.get("captain"))
         self.password = data.get("password")
         self.university = data.get("university")
     

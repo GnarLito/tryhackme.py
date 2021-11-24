@@ -1,8 +1,9 @@
 from .http import HTTP
 from .state import State
+from .user import ClientUser
 
 
-# TODO: build out Hackivities (room search), HTML scrapper for username and CSRF token, error build out, de HTML question object
+# TODO: build out Hackivities (room search) error build out
 # TODO: add VM, add GAMES, add VPN, user: (Team, messages, notifications)
 # ? maybe a writeup class but maybe not
 
@@ -13,6 +14,12 @@ class Client:
     
     def login(self, session):
         self.http.static_login(session)
+        if self._state.authenticated:
+            try:
+                self._state.user = ClientUser(state=self._state, username=self.http.username)
+            except Exception as e:
+                print("Failed to create CLient user: ", str(e))
+                self._state.authenticated = False
     
     def get_room(self, room_code):
         try:
@@ -40,18 +47,17 @@ class Client:
     
     def get_badge(self, badge_name):
         return self._state.get_badge(badge_name)
-    
     def get_badges(self):
         return self._state.badges
     
     def get_practice_rooms(self):
         practice_rooms = self.http.get_practise_rooms()
         return_rooms = []
-        return_rooms += [self._state.store_room(data=room) for room in practice_rooms.get("featured", [])]
-        return_rooms += [self._state.store_room(data=room) for room in practice_rooms.get("webExploitation", [])]
-        return_rooms += [self._state.store_room(data=room) for room in practice_rooms.get("windowsExploitation", [])]
-        return_rooms += [self._state.store_room(data=room) for room in practice_rooms.get("defensive", [])]
-        return_rooms += [self._state.store_room(data=room) for room in practice_rooms.get("recommended", [])]
+        return_rooms += [self._state.get_room(room_code=room.get("code")) for room in practice_rooms.get("featured", [])]
+        return_rooms += [self._state.get_room(room_code=room.get("code")) for room in practice_rooms.get("webExploitation", [])]
+        return_rooms += [self._state.get_room(room_code=room.get("code")) for room in practice_rooms.get("windowsExploitation", [])]
+        return_rooms += [self._state.get_room(room_code=room.get("code")) for room in practice_rooms.get("defensive", [])]
+        return_rooms += [self._state.get_room(room_code=room.get("code")) for room in practice_rooms.get("recommended", [])]
         return return_rooms
 
     # ! network is basicly nothing at the moment since i cant access is (im not a premium member)
@@ -100,4 +106,7 @@ class Client:
         return self.http.get_glossary_terms()
     @property
     def user(self):
-        return self._state.get_client_user()
+        return self._state.user
+    @property
+    def authenticated(self):
+        return self._state.authenticated

@@ -4,27 +4,27 @@ from .room import Room
 from .path import Path
 from .module import Module
 from .user import User, ClientUser
+from .message import MessageGroup
+from .team import Team
 from .badge import Badge
 from .serie import Serie
 from .network import Network
 from .vpn import VPN
 from .http import HTTP
 
-# TODO: vpn 
+# TODO: vpn
 class State:
     def __init__(self, http : HTTP):
         self.http = http
-        
-        self._CRRF_token = self.http._CSRF_token
-        if self.authenticated:
-            self.user = ClientUser(self.http.username)
-        else:
-            self.user = None
+        self.user = None
+        self._team = None
+        self._CRRF_token = self.http.retrieve_CSRF_token()
         
         self._rooms = weakref.WeakValueDictionary()
         self._paths = weakref.WeakValueDictionary()
         self._modules = weakref.WeakValueDictionary()
         self._users = weakref.WeakValueDictionary()
+        self._message_groups = weakref.WeakValueDictionary()
         self._badges = weakref.WeakValueDictionary()
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
@@ -33,8 +33,16 @@ class State:
     def _sync(self):
         for badge in self.http.get_all_badges(): self.store_badge(badge)
     
+    def _clear_client(self):
+        self._message_groups = weakref.WeakValueDictionary()
+        self._team = None
+    
     def get_client_user(self):
         return self.user
+    
+    @property
+    def rooms(self):
+        return list(self._rooms.values())
     
     def store_room(self, data):
         room_code = data.get("roomCode")
@@ -51,6 +59,10 @@ class State:
             room_data = self.http.get_room_details(room_code=room_code)
             return self.store_room(room_data)
     
+    @property
+    def paths(self):
+        return list(self._paths.values())
+    
     def store_path(self, data):
         path_code = data.get("code")
         try:
@@ -65,6 +77,10 @@ class State:
         except KeyError:
             path_data = self.http.get_path(path_code=path_code)
             return self.store_path(path_data)
+    
+    @property
+    def modules(self):
+        return list(self._modules.values())
     
     def store_module(self, data):
         module_code = data.get("moduleURL")
@@ -81,6 +97,10 @@ class State:
             module_data = self.http.get_module(module_code=module_code)
             return self.store_module(module_data)
     
+    @property
+    def users(self):
+        return list(self._users.values())
+    
     def store_user(self, username):
         try:
             return self._users[username]
@@ -94,6 +114,10 @@ class State:
         except KeyError:
             return self.store_user(username)
     
+    @property
+    def badges(self):
+        return list(self._badges.values())
+    
     def store_badge(self, data):
         badge_name = data.get("name")
         try:
@@ -106,7 +130,15 @@ class State:
         try:
             return self._badges[badge_name]
         except KeyError:
-            return self.store_badge(badge_name)
+            self._sync()
+            try:
+                return self._badges[badge_name]
+            except KeyError:
+                raise NotImplemented(f"Badge with name {badge_name} is not found")
+    
+    @property
+    def series(self):
+        return list(self._series.values())
     
     def store_serie(self, data):
         serie_code = data.get("id")
@@ -122,6 +154,10 @@ class State:
         except KeyError:
             serie_data = self.http.get_serie(serie_code=serie_code)
             return self.store_serie(serie_data)
+    
+    @property
+    def networks(self):
+        return list(self._networks.values())
     
     def store_network(self, data):
         network_code = data.get("code")
@@ -139,8 +175,39 @@ class State:
             return self.store_network(network_data)
 
     @property
+    def message_groups(self):
+        return list(self._message_groups.values())
+    
+    def store_message_group(self, data):
+        group_id = data.get("groupId")
+        try:
+            return self._message_groups[group_id]
+        except KeyError:
+            message_group = MessageGroup(state=self, data=data)
+            self._message_groups[group_id] = message_group
+            return message_group
+    def get_message_group(self, group_id):
+        try:
+            return self._message_groups[group_id]
+        except KeyError:
+            raise NotImplemented(f"message group with id {group_id} cannot be found")
+
+    @property
+    def team(self):
+        return self.team
+
+    def store_team(self, data):
+        if self._team is not None:
+            return self._team
+        else:
+            team = Team(state=self, data=data)
+            self._team = team
+            return team
+
+    @property
     def authenticated(self):
         return self.http.authenticated
+    
     @property
     def subscribed(self):
         if self.authenticated:

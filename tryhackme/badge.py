@@ -3,7 +3,7 @@
 class Badge:
     def __init__(self, state, data):
         self._state = state
-        
+        self.earned = False
         self._from_data(data)
     
     def _from_data(self, data):

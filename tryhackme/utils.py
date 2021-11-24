@@ -23,3 +23,14 @@ def HTML_parse(text, replace=""):
     text = html.unescape(text)
     text = re.sub(_HTML_TAGS_, replace, text)
     return text
+
+
+def find(predicate, seq):
+    for element in seq:
+        if predicate(element):
+            return element
+    return None
+
+def find_userId(userId, users):
+    predicate = lambda user : user.id == userId
+    return find(predicate, users)

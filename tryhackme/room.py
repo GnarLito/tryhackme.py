@@ -10,7 +10,10 @@ class Room:
         self._creators = []
         
         if not data.get('success', False):
-            raise NotImplemented("failed to create room, no success value returned")
+            if data.get("code") == 5:
+                raise NotImplemented(f"Room: {data.get('roomCode')}, Unable to load room: {data.get('message')}")
+            else:
+                raise NotImplemented("failed to create room, no success value returned")
         
         self._from_data(data)
         
@@ -57,7 +60,6 @@ class Room:
         return self._state.http.get_room_scoreboard(room_code=self.name)
     @property
     def tasks(self):
-        # TODO: add sessionless http client for no session task gathering
         if self.freeToUse or self._state.subscribed:
             return [RoomTask(state=self._state, data=task) for task in self._state.http.get_room_tasks(room_code=self.name).get('data')]
         else:
