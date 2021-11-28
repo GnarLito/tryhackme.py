@@ -39,6 +39,20 @@ class BaseUser:
 class User(BaseUser):
     pass
 
+class KOTHUser(BaseUser):
+    def __init__(self, state, data):
+        super().__init__(state, data.get("username"))
+        self._from_koth(data)
+    
+    def _from_koth(self, data):
+        self.level = data.get("level")
+        self.country = data.get("country")
+        self.score = data.get("score")
+        self.flags = data.get("flags")
+        self.king_time = data.get("kingTime")
+        self.game_rank = data.get("rank")
+
+
 class ClientUser(BaseUser):
     def __init__(self, state, username):
         super().__init__(state, username)
