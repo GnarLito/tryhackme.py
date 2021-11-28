@@ -1,11 +1,7 @@
 from .http import HTTP
 from .state import State
 from .user import ClientUser
-
-
-# TODO: build out Hackivities (room search) error build out
-# TODO: add VM, add GAMES, add VPN, user: (Team, messages, notifications)
-# ? maybe a writeup class but maybe not
+from .game import KingoftheHill
 
 class Client:
     def __init__(self, session=None):
@@ -85,6 +81,13 @@ class Client:
     
     def get_serie(self, serie_code):
         return self._state.get_serie(serie_code)
+    
+    def get_koth_game(self, game_code):
+        try:
+            game = self.http.get_game_detail(game_code=game_code)
+            return KingoftheHill(state=self._state, data=game)
+        except Exception as e:
+            raise e
     
     def get_leaderboard(self, country=None, type=None):
         return self.http.get_leaderboards(country=country, type=type)

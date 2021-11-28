@@ -11,6 +11,7 @@ from .serie import Serie
 from .network import Network
 from .vpn import VPN
 from .http import HTTP
+from .errors import NotImplemented
 
 # TODO: vpn
 class State:
@@ -18,7 +19,7 @@ class State:
         self.http = http
         self.user = None
         self._team = None
-        self._CRRF_token = self.http.retrieve_CSRF_token()
+        self._CSRF_token = self.http.retrieve_CSRF_token()
         
         self._rooms = weakref.WeakValueDictionary()
         self._paths = weakref.WeakValueDictionary()
