@@ -26,9 +26,9 @@ class State:
         self._modules = weakref.WeakValueDictionary()
         self._users = weakref.WeakValueDictionary()
         self._message_groups = weakref.WeakValueDictionary()
-        self._badges = weakref.WeakValueDictionary()
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
+        self._badges = {}
         self.vpn = [] # ? hmm
     
     def _sync(self):
@@ -44,9 +44,9 @@ class State:
         self._modules = weakref.WeakValueDictionary()
         self._users = weakref.WeakValueDictionary()
         self._message_groups = weakref.WeakValueDictionary()
-        self._badges = weakref.WeakValueDictionary()
         self._series = weakref.WeakValueDictionary()
         self._networks = weakref.WeakValueDictionary()
+        self._badges = {}
     
     def get_client_user(self):
         return self.user
