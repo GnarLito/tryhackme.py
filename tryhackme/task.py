@@ -3,6 +3,8 @@ from . import utils
 
 
 class RoomTask:
+    __slots__ = ("raw_title", "raw_description", "description", "type", "number", "created", "deadline", "uploadId", )
+    
     def __init__(self, state, data):
         self._state = state
         self._questions = []
@@ -30,6 +32,8 @@ class RoomTask:
 
 
 class PathTask:
+    __slots__ = ("id", "title", "time", "overview", "outcome", "number", )
+    
     def __init__(self, state, data):
         self.state = state
         self._rooms = []

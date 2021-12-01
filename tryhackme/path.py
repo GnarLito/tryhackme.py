@@ -2,6 +2,8 @@ from .task import PathTask
 from . import utils
 
 class Path:
+    __slots__ = ("code", "raw_description", "color", "raw_intro", "type", "public", "room_count", "summary", "difficult", "time_to_complete", )
+    
     def __init__(self, state, data):
         self._state = state
         
@@ -45,7 +47,7 @@ class Path:
     @property
     def modules(self):
         return [self._state.store_module(module) for module in self._module]
-    # TODO: badge class
+
     @property
     def badges(self):
         return [self._state.store_badge(badge) for badge in self._badges]

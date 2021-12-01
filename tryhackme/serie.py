@@ -1,6 +1,7 @@
 
 
 class Serie:
+    __slots__ = ("id", "code", "name", "description", "difficulty", )
     def __init__(self, state, data):
         self._state = state
         

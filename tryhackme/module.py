@@ -1,6 +1,8 @@
 
 
 class Module:
+    __slots__ = ("name", "code", "id", "description", "summary", )
+    
     def __init__(self, state, data):
         self._state = state
         

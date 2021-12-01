@@ -1,6 +1,8 @@
 
 
 class VPN:
+    __slots__ = ("available", "connected", "servers", "unlock_VIP_servers", "current_server", "IP", "public_ip", )
+    
     def __init__(self, state):
         self._state = state
         self.available = False
@@ -18,7 +20,7 @@ class VPN:
             self.current_server = data.get('currentServer')
 
             self.IP = info.get('virtualIP', None)
-            self.Public_ip = info.get('publicIP', None)
+            self.public_ip = info.get('publicIP', None)
             
             if self.IP is not None:
                 self.connected = True

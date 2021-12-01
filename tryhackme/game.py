@@ -1,6 +1,8 @@
 from .user import KOTHUser
 
 class KingoftheHill:
+    __slot__ = ("id", "start_time", "finnish_time", "status", "flag_count", "resets", "game_type", "ceator", "users", "King", )
+    
     def __init__(self, state, data):
         self._state = state
         
