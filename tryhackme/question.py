@@ -1,6 +1,8 @@
 from . import utils
 
 class Question:
+    __slots__ = ("raw_question", "question", "raw_hint", "hint", "number", "raw_description", "description", "extra_points", "correct", "attempts", "submission", "has_answer", )
+    
     def __init__(self, state, data):
         self._state = state
         self._from_data(data)
