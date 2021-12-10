@@ -2,6 +2,7 @@ from .errors import NotImplemented
 
 
 class BaseUser:
+    __slots__ = ("username", "rank", "points", "subcribed", )
     def __init__(self, state, username):
         self._state = state
         
@@ -37,9 +38,12 @@ class BaseUser:
         return [self._state.get_room(room.get("code")) for room in self._completed_rooms]
 
 class User(BaseUser):
+    __slots__ = BaseUser.__slots__
     pass
 
 class KOTHUser(BaseUser):
+    __slots__ = BaseUser.__slots__ + ("level", "country", "score", "flags", "kink_time", "game_rank", )
+    
     def __init__(self, state, data):
         super().__init__(state, data.get("username"))
         self._from_koth(data)
@@ -54,6 +58,8 @@ class KOTHUser(BaseUser):
 
 
 class ClientUser(BaseUser):
+    __slots__ = BaseUser.__slots__
+    
     def __init__(self, state, username):
         super().__init__(state, username)
         self._message_groups = []

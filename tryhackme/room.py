@@ -4,6 +4,8 @@ from .task import RoomTask
 # ? writeups class
 
 class Room:
+    __slots__ = ("name", "id", "title", "description", "created", "published", "users", "type", "public", "difficulty", "freeToUse", "ctf", "tags", "ipType", "simpleRoom", "writeups", "locked", "comingSoon", "views", "certificate", "timeToComplete", "userCompleted", )
+    
     def __init__(self, state, data):
         self._state = state
 
