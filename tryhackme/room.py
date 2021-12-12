@@ -48,7 +48,7 @@ class Room:
     def question_count(self):
         count = 0
         for task in self.tasks:
-            count += task.questions_count
+            count += task.question_count
         return count
     @property
     def precentage(self):
