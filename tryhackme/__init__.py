@@ -1,5 +1,5 @@
 
-__version__ = "1.0.0"
+__version__ = "1.2.4"
 
 from .errors import *
 from .converters import *

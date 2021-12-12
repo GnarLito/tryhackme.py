@@ -1,11 +1,11 @@
 import setuptools
-
+from tryhackme import __version__
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="tryhackme.py",
-    version="1.2.1",
+    version=__version__,
     author="gnarlito",
     author_email="gnarlito35@gmail.com",
     description="THM public API wrapper",
