@@ -2,7 +2,7 @@ from .task import PathTask
 from . import utils
 
 class Path:
-    __slots__ = ("_state", "_badges", "_careers", "_modules", "_tasks", "code", "raw_description", "color", "raw_intro", "type", "public", "room_count", "summary", "difficult", "time_to_complete", )
+    __slots__ = ("__weakref__", "_state", "_badges", "_careers", "_modules", "_tasks", "code", "raw_description", "color", "raw_intro", "type", "public", "room_count", "summary", "difficult", "time_to_complete", )
     
     def __init__(self, state, data):
         self._state = state

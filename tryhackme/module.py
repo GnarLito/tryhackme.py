@@ -1,7 +1,7 @@
 
 
 class Module:
-    __slots__ = ("_state", "_rooms", "_prerequisites", "_next_steps", "name", "code", "id", "description", "summary", )
+    __slots__ = ("__weakref__", "_state", "_rooms", "_prerequisites", "_next_steps", "name", "code", "id", "description", "summary", )
     
     def __init__(self, state, data):
         self._state = state

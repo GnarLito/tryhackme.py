@@ -1,7 +1,7 @@
 
 
 class Serie:
-    __slots__ = ("_state", "_rooms", "id", "code", "name", "description", "difficulty", )
+    __slots__ = ("__weakref__", "_state", "_rooms", "id", "code", "name", "description", "difficulty", )
     def __init__(self, state, data):
         self._state = state
         

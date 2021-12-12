@@ -38,11 +38,11 @@ class BaseUser:
         return [self._state.get_room(room.get("code")) for room in self._completed_rooms]
 
 class User(BaseUser):
-    __slots__ = BaseUser.__slots__
+    __slots__ = BaseUser.__slots__ + ("__weakref__", )
     pass
 
 class KOTHUser(BaseUser):
-    __slots__ = BaseUser.__slots__ + ("level", "country", "score", "flags", "king_time", "game_rank", )
+    __slots__ = BaseUser.__slots__ + ("__weakref__", "_state", "name", "rank", "points", "subscribed", "_completed_rooms", "_badges", "level", "country", "score", "flags", "king_time", "game_rank", )
     
     def __init__(self, state, data):
         super().__init__(state, data.get("username"))
@@ -58,7 +58,7 @@ class KOTHUser(BaseUser):
 
 
 class ClientUser(BaseUser):
-    __slots__ = BaseUser.__slots__ + ("_message_groups", "_team", )
+    __slots__ = BaseUser.__slots__ + ("__weakref__", "_message_groups", "_team", )
     
     def __init__(self, state, username):
         super().__init__(state, username)
