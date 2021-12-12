@@ -1,3 +1,6 @@
+[![PyPI version](https://img.shields.io/pypi/v/tryhackme.py.svg)](https://pypi.python.org/pypi/tryhackme.py)
+[![Python supported versions](https://img.shields.io/pypi/pyversions/tryhackme.py.svg)](https://pypi.python.org/pypi/tryhackme.py)
+
 <p><img src="https://assets.tryhackme.com/img/THMlogo.png" width="350" title="TryHackMe Logo"></p>
 
 
