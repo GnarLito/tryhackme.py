@@ -5,7 +5,6 @@ import html
 def to_json(obj):
     return json.dumps(obj, separators=(',', ':'), ensure_ascii=True)
 
-
 def response_to_json_or_text(response):
     text = response.text
     try:
@@ -15,7 +14,6 @@ def response_to_json_or_text(response):
         # $ Thanks Cloudflare
         pass
     return text
-
 
 _HTML_TAGS_ = re.compile("<[^<]*>")
 def HTML_parse(text, replace=""):

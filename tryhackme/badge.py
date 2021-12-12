@@ -1,7 +1,7 @@
 
 
 class Badge:
-    __slots__ = ("title", "name", "description", "earned", )
+    __slots__ = ("_state", "_to_earn", "title", "name", "description", "earned", )
     
     def __init__(self, state, data):
         self._state = state

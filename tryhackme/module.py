@@ -1,7 +1,7 @@
 
 
 class Module:
-    __slots__ = ("name", "code", "id", "description", "summary", )
+    __slots__ = ("_state", "_rooms", "_prerequisites", "_next_steps", "name", "code", "id", "description", "summary", )
     
     def __init__(self, state, data):
         self._state = state
@@ -16,7 +16,7 @@ class Module:
         self.summary = data.get('summary')
         self._rooms = data.get('rooms')
         self._prerequisites = data.get('prerequisites')
-        self._nextSteps = data.get('nextSteps')
+        self._next_steps = data.get('nextSteps')
 
     @property
     def rooms(self):
@@ -25,6 +25,6 @@ class Module:
     def prerequisites(self):
         return [self._state.store_module(module) for module in self._prerequisites]
     @property
-    def nextSteps(self):
-        return [self._state.store_module(module) for module in self._nextSteps]
+    def next_steps(self):
+        return [self._state.store_module(module) for module in self._next_steps]
 

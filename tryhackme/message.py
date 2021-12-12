@@ -1,7 +1,7 @@
 from . import utils
 
 class Message:
-    __slots__ = ("group", "inserted", "user", )
+    __slots__ = ("_state", "group", "inserted", "user", )
     
     def __init__(self, state, group, data):
         self._state = state
@@ -16,7 +16,7 @@ class Message:
 
 # * can only be used on `get_all_message_groups` api call
 class MessageGroup:
-    __slots__ = ("messages", "id", "title", )
+    __slots__ = ("_state", "_users", "messages", "id", "title", )
     def __init__(self, state, data):
         self._state = state
         self.messages = []

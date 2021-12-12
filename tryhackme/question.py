@@ -1,7 +1,7 @@
 from . import utils
 
 class Question:
-    __slots__ = ("raw_question", "question", "raw_hint", "hint", "number", "raw_description", "description", "extra_points", "correct", "attempts", "submission", "has_answer", )
+    __slots__ = ("_state", "raw_question", "question", "raw_hint", "hint", "number", "raw_description", "description", "extra_points", "correct", "attempts", "submission", "has_answer", )
     
     def __init__(self, state, data):
         self._state = state
@@ -14,7 +14,7 @@ class Question:
         self.hint = utils.HTML_parse(self.raw_hint)
         self.number = data.get("questionNo")
 
-        # * only when valid session is used
+        # * only when authenticated
         self.raw_description = data.get("answerDesc", "")
         self.description = utils.HTML_parse(self.raw_description)
         self.extra_points = data.get("extraPoints", None)

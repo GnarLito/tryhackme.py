@@ -1,7 +1,7 @@
 
 
 class Team:
-    __slots__ = ("name", "captain", "password", "university", )
+    __slots__ = ("_state", "_members", "name", "captain", "password", "university", )
     
     def __init__(self, state, data):
         self._state = state

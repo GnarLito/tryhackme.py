@@ -2,7 +2,7 @@ from .task import PathTask
 from . import utils
 
 class Path:
-    __slots__ = ("code", "raw_description", "color", "raw_intro", "type", "public", "room_count", "summary", "difficult", "time_to_complete", )
+    __slots__ = ("_state", "_badges", "_careers", "_modules", "_tasks", "code", "raw_description", "color", "raw_intro", "type", "public", "room_count", "summary", "difficult", "time_to_complete", )
     
     def __init__(self, state, data):
         self._state = state
@@ -47,11 +47,9 @@ class Path:
     @property
     def modules(self):
         return [self._state.store_module(module) for module in self._module]
-
     @property
     def badges(self):
         return [self._state.store_badge(badge) for badge in self._badges]
-    # ? What is this
     @property
-    def careers(self):
+    def careers(self): # ? What is this
         return [career for career in self._careers]

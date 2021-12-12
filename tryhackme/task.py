@@ -3,7 +3,7 @@ from . import utils
 
 
 class RoomTask:
-    __slots__ = ("raw_title", "raw_description", "description", "type", "number", "created", "deadline", "uploadId", )
+    __slots__ = ("_state", "_questions", "raw_title", "raw_description", "description", "type", "number", "created", "deadline", "uploadId", )
     
     def __init__(self, state, data):
         self._state = state
@@ -32,7 +32,7 @@ class RoomTask:
 
 
 class PathTask:
-    __slots__ = ("id", "title", "time", "overview", "outcome", "number", )
+    __slots__ = ("_state", "_module_url", "_rooms", "id", "title", "time", "overview", "outcome", "number", )
     
     def __init__(self, state, data):
         self.state = state
@@ -42,7 +42,7 @@ class PathTask:
     def _from_data(self, data):
         self.id = data.get("_id")
         self.title = data.get("title")
-        self._moduleURL = data.get("moduleURL")
+        self._module_url = data.get("moduleURL")
         self.time = int(data.get("time"))
         self.overview = data.get("overview")
         self.outcomes = data.get("outcome")
@@ -54,4 +54,4 @@ class PathTask:
         return [self._state.get_room(room_code=room.get("code")) for room in self._rooms]
     @property
     def module(self):
-        return self._state.get_module(moduleURL=self._moduleURL)
+        return self._state.get_module(moduleURL=self._module_url)

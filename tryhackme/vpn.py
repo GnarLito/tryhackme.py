@@ -1,7 +1,7 @@
 
 
 class VPN:
-    __slots__ = ("available", "connected", "servers", "unlock_VIP_servers", "current_server", "IP", "public_ip", )
+    __slots__ = ("_state", "available", "connected", "servers", "unlock_VIP_servers", "current_server", "IP", "public_ip", )
     
     def __init__(self, state):
         self._state = state
