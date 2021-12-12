@@ -5,9 +5,12 @@ from .game import KingoftheHill
 
 class Client:
     def __init__(self, session=None):
-        self.http = HTTP(session)
+        self.http = HTTP()
         self._state = State(self.http)
-    
+        
+        if(session is not None):
+            self.login(session)
+        
     def login(self, session):
         self.http.static_login(session)
         if self._state.authenticated:
@@ -100,7 +103,7 @@ class Client:
         return self.http.get_server_time().get('datetime')
     @property
     def server_stats(self):
-        return self.http.get_server_stats()
+        return self.http.get_site_stats()
     @property
     def subscription_cost(self):
         return self.http.get_subscription_cost()

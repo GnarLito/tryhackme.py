@@ -17,6 +17,7 @@ from .errors import NotImplemented
 class State:
     def __init__(self, http : HTTP):
         self.http = http
+        self.http._state = self
         self.user = None
         self._team = None
         self._CSRF_token = self.http.retrieve_CSRF_token()

@@ -32,8 +32,21 @@ class NotFound(WebError):
 class BaseCheckError(NotImplemented):
     pass
 
+class CheckFailed(BaseCheckError):
+    pass
+
 class TypeNotInTypeList(BaseCheckError):
     pass
 
-class Session_required(BaseCheckError):
+class SessionRequired(BaseCheckError):
+    pass
+
+
+
+# * Context
+
+class BaseContextError(NotImplemented):
+    pass
+
+class MissingArgumentError(BaseContextError):
     pass

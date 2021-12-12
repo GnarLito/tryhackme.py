@@ -1,7 +1,23 @@
+from .errors import CheckFailed
+from .context import http_ctx
 
 
 class Base_decorator:
     pass
+
+class Decorator_cog:
+    __decorator__ = Base_decorator
+    def __init__(self, *args, **kwargs):
+        if type(self.__decorator__) == Base_decorator:
+            raise NotImplemented("Failed to decorate class, unknown decorator class found")
+        
+        
+        # * Annotations auto decorator
+        class_func_list = [i for i in type(self).__dict__ if not i.startswith('__')]
+        for func_name in class_func_list:
+            class_func = type(self).__dict__[func_name]
+            setattr(self, func_name, self.__decorator__(self, class_func))
+        super().__init__(*args, **kwargs)
 
 class annotater(Base_decorator):
     def __init__(self, cls, func):
@@ -42,21 +58,38 @@ class annotater(Base_decorator):
                 
         return (out_args, out_kwargs)
 
+class request_annotator(annotater):
+    def __call__(self, *args, **kwargs):
+        try:
+            ctx = http_ctx(state=self.cls._state, args=args, kwargs=kwargs)
+            ctx.args, ctx.kwargs = self.convert(*ctx.args, **ctx.kwargs) # ? global context needed for convert to accept a context object
+            self.arg_injectors(ctx)
+            if self.check(ctx):
+                result = self.function(self.cls, *ctx.args, **ctx.kwargs)
+                return result
+            raise CheckFailed()
+        except Exception as e:
+            print(f"Failed to run: {self.function.__name__}(), reason: {e.__repr__()}")
+            return None
+    
+    def arg_injectors(self, ctx):
+        if hasattr(self.function, "__arg_injectors__"):
+            for injector in self.function.__arg_injectors__:
+                try:
+                    injector(ctx)
+                except Exception as e:
+                    raise e
 
-class Decorator_cog:
-    __decorator__ = Base_decorator
-    def __init__(self, *args, **kwargs):
-        if type(self.__decorator__) == Base_decorator:
-            raise NotImplemented("Failed to decorate class, unknown decorator class found")
-        
-        
-        # * Annotations auto decorator
-        class_func_list = [i for i in type(self).__dict__ if not i.startswith('__')]
-        for func_name in class_func_list:
-            class_func = type(self).__dict__[func_name]
-            setattr(self, func_name, self.__decorator__(self, class_func))
-        super().__init__(*args, **kwargs)
-
+    def check(self, ctx):
+        if hasattr(self.function, "__checks__"):
+            for check in self.function.__checks__:
+                try:
+                    if not check(ctx):
+                        return False
+                except Exception as e:
+                    raise e
+        return True
 
 class request_cog(Decorator_cog):
-    __decorator__ = annotater
+    __decorator__ = request_annotator
+    
