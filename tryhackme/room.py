@@ -1,10 +1,10 @@
 from .errors import NotImplemented
 from .task import RoomTask
-
+from . import utils
 # ? writeups class
 
 class Room:
-    __slots__ = ("__weakref__", "_state", "_creators", "name", "id", "title", "description", "created", "published", "users", "type", "public", "difficulty", "freeToUse", "ctf", "tags", "ipType", "simpleRoom", "writeups", "locked", "comingSoon", "views", "certificate", "timeToComplete", "userCompleted", )
+    __slots__ = ("__weakref__", "_state", "_creators", "name", "id", "raw_title", "title", "raw_description", "description", "created", "published", "users", "type", "public", "difficulty", "freeToUse", "ctf", "tags", "ipType", "simpleRoom", "writeups", "locked", "comingSoon", "views", "certificate", "timeToComplete", "userCompleted", )
     
     def __init__(self, state, data):
         self._state = state
@@ -22,8 +22,10 @@ class Room:
     def _from_data(self, data):
         self.name = data.get("roomCode")
         self.id = data.get("roomId")
-        self.title = data.get("title")
-        self.description = data.get("description")
+        self.raw_title = data.get("title")
+        self.title = utils.HTML_parse(self.raw_title).strip()
+        self.raw_description = data.get("description")
+        self.description = utils.HTML_parse(self.raw_description).strip()
         self.created = data.get("created")
         self.published = data.get("published")
         self.users = data.get("users")

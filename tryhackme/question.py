@@ -9,14 +9,14 @@ class Question:
         
     def _from_data(self, data):
         self.raw_question = data.get("question")
-        self.question = utils.HTML_parse(self.raw_question)
+        self.question = utils.HTML_parse(self.raw_question).strip()
         self.raw_hint = data.get("hint")
-        self.hint = utils.HTML_parse(self.raw_hint)
+        self.hint = utils.HTML_parse(self.raw_hint).strip()
         self.number = data.get("questionNo")
 
         # * only when authenticated
         self.raw_description = data.get("answerDesc", "")
-        self.description = utils.HTML_parse(self.raw_description)
+        self.description = utils.HTML_parse(self.raw_description).strip()
         self.extra_points = data.get("extraPoints", None)
         self.correct = data.get("correct", False)
         self.attempts = data.get("attempts", 0)

@@ -15,7 +15,7 @@ def response_to_json_or_text(response):
         pass
     return text
 
-_HTML_TAGS_ = re.compile("<[^<]*>")
+_HTML_TAGS_ = re.compile("<[^<]*?>")
 def HTML_parse(text, replace=""):
     text = text.replace("\n", "")
     text = html.unescape(text)

@@ -3,7 +3,7 @@ from . import utils
 
 
 class RoomTask:
-    __slots__ = ("_state", "_questions", "raw_title", "raw_description", "description", "type", "number", "created", "deadline", "uploadId", )
+    __slots__ = ("_state", "_questions", "raw_title", "title", "raw_description", "description", "type", "number", "created", "deadline", "uploadId", )
     
     def __init__(self, state, data):
         self._state = state
@@ -13,9 +13,9 @@ class RoomTask:
     
     def _from_data(self, data):
         self.raw_title = data.get('taskTitle')
-        self.title = utils.HTML_parse(self.raw_title, "*")
+        self.title = utils.HTML_parse(self.raw_title, "*").strip()
         self.raw_description = data.get('taskDesc')
-        self.description = utils.HTML_parse(self.raw_description)
+        self.description = utils.HTML_parse(self.raw_description).strip()
         self.type = data.get('taskType')
         self.number = data.get('taskNo')
         self.created = data.get('taskCreated')
